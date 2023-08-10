@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Websocket.Tcp.Proxy", "Websocket.TcpConnector.Proxy\Websocket.Tcp.Proxy.csproj", "{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Websocket.Tcp.Host.Abstractions", "Websocket.Host.Abstractions\Websocket.Tcp.Host.Abstractions.csproj", "{8DDC2079-1EB1-472A-86D2-FB77B00976C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocket.Tcp.UnitTests", "WebSocket.Tcp.UnitTests\WebSocket.Tcp.UnitTests.csproj", "{4254EA3A-BA21-4691-B607-8C57A59E10D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Websocket.Tcp.Server", "Websocket.TcpConnector\Websocket.Tcp.Server.csproj", "{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Websocket.Tcp.Extensions.HttpParser", "Websocket.TcpConnector.Extensions.HttpParser\Websocket.Tcp.Extensions.HttpParser.csproj", "{16E52DD7-3115-4216-9E8A-CFB2F6694BFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Websocket.Tcp.Host", "Websocket.TcpConnector.Host\Websocket.Tcp.Host.csproj", "{481FB027-E8AA-4E92-AE31-463F0DA8E02C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EBC8419E-710B-4308-A5D0-1829354061D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DDC2079-1EB1-472A-86D2-FB77B00976C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DDC2079-1EB1-472A-86D2-FB77B00976C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DDC2079-1EB1-472A-86D2-FB77B00976C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DDC2079-1EB1-472A-86D2-FB77B00976C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4254EA3A-BA21-4691-B607-8C57A59E10D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4254EA3A-BA21-4691-B607-8C57A59E10D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4254EA3A-BA21-4691-B607-8C57A59E10D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4254EA3A-BA21-4691-B607-8C57A59E10D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16E52DD7-3115-4216-9E8A-CFB2F6694BFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16E52DD7-3115-4216-9E8A-CFB2F6694BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16E52DD7-3115-4216-9E8A-CFB2F6694BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16E52DD7-3115-4216-9E8A-CFB2F6694BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481FB027-E8AA-4E92-AE31-463F0DA8E02C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481FB027-E8AA-4E92-AE31-463F0DA8E02C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481FB027-E8AA-4E92-AE31-463F0DA8E02C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481FB027-E8AA-4E92-AE31-463F0DA8E02C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FB7441CF-ECB3-4BBB-A376-8C82FBCA2C66} = {EBC8419E-710B-4308-A5D0-1829354061D8}
+		{8DDC2079-1EB1-472A-86D2-FB77B00976C4} = {EBC8419E-710B-4308-A5D0-1829354061D8}
+		{BC74DEA2-2A42-4042-BEFD-2A27E7E1C88A} = {EBC8419E-710B-4308-A5D0-1829354061D8}
+		{16E52DD7-3115-4216-9E8A-CFB2F6694BFF} = {EBC8419E-710B-4308-A5D0-1829354061D8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B64E916-2F86-42E9-9EBA-E3FBDAFB418C}
+	EndGlobalSection
+EndGlobal
