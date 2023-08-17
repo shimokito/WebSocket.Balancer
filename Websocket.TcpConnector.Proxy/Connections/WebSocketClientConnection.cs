@@ -3,6 +3,7 @@ using System.Text;
 using Websocket.Tcp.Proxy.ConnectionResolver;
 using Websocket.Tcp.Proxy.Connections.Queue;
 using Websocket.Tcp.Proxy.Connections.Queue.Client;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Websocket.Tcp.Proxy.Connections
 {
@@ -35,65 +36,144 @@ namespace Websocket.Tcp.Proxy.Connections
             ArraySegment<byte> buffer = new byte[4096];
             while (true)
             {
-                try
+                while (webSocket.State == WebSocketState.Open)
                 {
-                    WebSocketReceiveResult result;
-                    MemoryStream? ms = null;
-                    byte[]? bufferWithTrailing = null;
-                    int count = 0;
-
-                    do
+                    try
                     {
-                        result = await webSocket.ReceiveAsync(buffer, cancellationToken).ConfigureAwait(false);
+                        WebSocketReceiveResult result;
+                        MemoryStream? ms = null;
+                        byte[]? bufferWithTrailing = null;
+                        int count = 0;
 
-                        byte[]? array = buffer.Array;
-                        if (bufferWithTrailing == null)
+                        //Первая иттерация получения сообщения
+                        do
                         {
-                            bufferWithTrailing = array;
-                            count += result.Count;
-                        }
-                        else if (array != null)
-                        {
-                            if (ms == null)
+                            result = await webSocket.ReceiveAsync(buffer, cancellationToken).ConfigureAwait(false);
+                            byte[]? array = buffer.Array;
+
+                            if (array != null)
                             {
-                                ms = new MemoryStream();
-                                ms.Write(bufferWithTrailing, 0, count);
+                                bufferWithTrailing = array;
+                                count += result.Count;
                             }
 
-                            ms.Write(array, 0, result.Count);
-                            count += result.Count;
+                        } while (!result.EndOfMessage && result.Count == 0);
+
+                        //Проверка на окончание сообщения.
+                        if (!result.EndOfMessage)
+                        {
+                            //Копируем буфер и заполняем в стрим.
+                            bufferWithTrailing = bufferWithTrailing!.ToArray();
+                            ms ??= new MemoryStream();
+                            ms.Write(bufferWithTrailing, 0, count);
+
+                            //Считываем сообщение до конца.
+                            do
+                            {
+                                result = await webSocket.ReceiveAsync(buffer, cancellationToken).ConfigureAwait(false);
+                                byte[]? array = buffer.Array;
+
+                                if (array != null)
+                                {
+                                    ms.Write(array, 0, result.Count);
+                                    count += result.Count;
+                                }
+
+                            } while (!result.EndOfMessage);
                         }
 
-                    } while (!result.EndOfMessage);
+                        //Если сообщение закрывающее вебсокет, передаём ивент.
+                        if (result.MessageType == WebSocketMessageType.Close)
+                        {
+                            throw new NotImplementedException("Close hanshake not implemented.");
+                        }
 
-                    if (bufferWithTrailing == null)
-                        continue;
+                        //Копируем результат.
+                        ArraySegment<byte> bytes;
+                        if (ms == null)
+                        {
+                            bytes = new ArraySegment<byte>(new byte[count]);
+                            Array.Copy(bufferWithTrailing!, 0, bytes.Array!, 0, count);
+                        }
+                        else
+                        {
+                            bytes = ms.ToArray();
+                        }
 
-                    ArraySegment<byte> bytes;
-                    if (ms == null)
-                    {
-                        bytes = new ArraySegment<byte>(new byte[count]);
-                        Array.Copy(bufferWithTrailing, 0, bytes.Array!, 0, count);
+                        //Очищаем стрим если нужно.
+                        ms?.Dispose();
+
+                        //Отправляем ивент сообщения.
+                        var message = Encoding.UTF8.GetString(bytes.Slice(0, count));
                     }
-                    else
+                    catch (OperationCanceledException)
                     {
-                        bytes = ms.ToArray();
+                        break;
                     }
-
-                    ms?.Dispose();
-
-                    if (result.MessageType == WebSocketMessageType.Close)
+                    catch (Exception ex)
                     {
-                        await CloseOutputAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, cancellationToken).ConfigureAwait(false);
-                        _unsubscriber?.Dispose();
-                        return;
+                        throw ex;
                     }
-                    var slicedBuffer = bytes.Slice(0, count);
-                    await _messageQueue.EnqueueAsync(new WebSocketMessageQueueItem<WebSocketClientConnection>(this, slicedBuffer, result.MessageType, true), cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    await webSocket.SendAsync(Encoding.UTF8.GetBytes(ex.Message), WebSocketMessageType.Text, WebSocketMessageFlags.EndOfMessage, cancellationToken);
+                    //try
+                    //{
+                    //    WebSocketReceiveResult result;
+                    //    MemoryStream? ms = null;
+                    //    byte[]? bufferWithTrailing = null;
+                    //    int count = 0;
+
+                    //    do
+                    //    {
+                    //        result = await webSocket.ReceiveAsync(buffer, cancellationToken).ConfigureAwait(false);
+
+                    //        byte[]? array = buffer.Array;
+                    //        if (bufferWithTrailing == null)
+                    //        {
+                    //            bufferWithTrailing = array;
+                    //            count += result.Count;
+                    //        }
+                    //        else if (array != null)
+                    //        {
+                    //            if (ms == null)
+                    //            {
+                    //                ms = new MemoryStream();
+                    //                ms.Write(bufferWithTrailing, 0, count);
+                    //            }
+
+                    //            ms.Write(array, 0, result.Count);
+                    //            count += result.Count;
+                    //        }
+
+                    //    } while (!result.EndOfMessage);
+
+                    //    if (bufferWithTrailing == null)
+                    //        continue;
+
+                    //    ArraySegment<byte> bytes;
+                    //    if (ms == null)
+                    //    {
+                    //        bytes = new ArraySegment<byte>(new byte[count]);
+                    //        Array.Copy(bufferWithTrailing, 0, bytes.Array!, 0, count);
+                    //    }
+                    //    else
+                    //    {
+                    //        bytes = ms.ToArray();
+                    //    }
+
+                    //    ms?.Dispose();
+
+                    //    if (result.MessageType == WebSocketMessageType.Close)
+                    //    {
+                    //        await CloseOutputAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, cancellationToken).ConfigureAwait(false);
+                    //        _unsubscriber?.Dispose();
+                    //        return;
+                    //    }
+                    //    var slicedBuffer = bytes.Slice(0, count);
+                    //    await _messageQueue.EnqueueAsync(new WebSocketMessageQueueItem<WebSocketClientConnection>(this, slicedBuffer, result.MessageType, true), cancellationToken);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    await webSocket.SendAsync(Encoding.UTF8.GetBytes(ex.Message), WebSocketMessageType.Text, WebSocketMessageFlags.EndOfMessage, cancellationToken);
+                    //}
                 }
             }
         }
